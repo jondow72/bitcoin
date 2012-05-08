@@ -8,6 +8,11 @@
 #include <string>
 #include <vector>
 
+static const int CLIENT_VERSION_MAJOR       =  0;
+static const int CLIENT_VERSION_MINOR       =  6;
+static const int CLIENT_VERSION_REVISION    = 99;
+static const int CLIENT_VERSION_BUILD       =  0;
+
 /**
  * database format versioning
  */

@@ -2,6 +2,7 @@ Copyright (c) 2009-2014 Bitcoin Developers
 Copyright (c) 2011-2012 PPCoin Developers
 Copyright (c) 2013-2014 NovaCoin Developers
 Copyright (c) 2014 Magi Developers
+Bitcoin 0.6.99 BETA
 
 Distributed under the MIT/X11 software license, see the accompanying
 file license.txt or http://www.opensource.org/licenses/mit-license.php.
