@@ -552,6 +552,22 @@ bool CTxDB::WriteBlockIndex(const CDiskBlockIndex& blockindex)
     return Write(make_pair(string("blockindex"), blockindex.GetBlockHash()), blockindex);
 }
 
+bool CTxDB::WriteBlockFileInfo(int nFile, const CBlockFileInfo &info) {
+    return Write(make_pair(string("blockfile"), nFile), info);
+}
+
+bool CTxDB::ReadBlockFileInfo(int nFile, CBlockFileInfo &info) {
+    return Read(make_pair(string("blockfile"), nFile), info);
+}
+
+bool CTxDB::WriteLastBlockFile(int nFile) {
+    return Write(string("lastblockfile"), nFile);
+}
+
+bool CTxDB::ReadLastBlockFile(int &nFile) {
+    return Read(string("lastblockfile"), nFile);
+}
+
 bool CTxDB::ReadHashBestChain(uint256& hashBestChain)
 {
     return Read(string("hashBestChain"), hashBestChain);
@@ -639,6 +655,12 @@ bool CTxDB::LoadBlockIndex()
             return error("CTxDB::LoadBlockIndex() : Failed stake modifier checkpoint height=%d, modifier=0x%016"PRI64x, pindex->nHeight, pindex->nStakeModifier);
     }
 
+    // Load block file info
+    ReadLastBlockFile(nLastBlockFile);
+    printf("LoadBlockIndex(): last block file = %i\n", nLastBlockFile);
+    if (ReadBlockFileInfo(nLastBlockFile, infoLastBlockFile))
+        printf("LoadBlockIndex(): last block file: %s\n", infoLastBlockFile.ToString().c_str());
+ 
     // Load hashBestChain pointer to end of best chain
     if (!ReadHashBestChain(hashBestChain))
     {
@@ -824,7 +846,8 @@ bool CTxDB::LoadBlockIndexGuts()
             pindexNew->pprev          = InsertBlockIndex(diskindex.hashPrev);
             pindexNew->pnext          = InsertBlockIndex(diskindex.hashNext);
             pindexNew->nHeight        = diskindex.nHeight;
-            pindexNew->nAlternative   = diskindex.nAlternative;
+            pindexNew->pos            = diskindex.pos;
+            pindexNew->nUndoPos       = diskindex.nUndoPos;
             pindexNew->nMint          = diskindex.nMint;
             pindexNew->nMoneySupply   = diskindex.nMoneySupply;
             pindexNew->nFlags         = diskindex.nFlags;
