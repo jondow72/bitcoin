@@ -317,6 +317,40 @@ public:
 
 
 
+/** Access to the transaction database (blkindex.dat) */
+class CTxDB : public CDB
+{
+public:
+    CTxDB(const char* pszMode="r+") : CDB("blkindex.dat", pszMode) { }
+private:
+    CTxDB(const CTxDB&);
+    void operator=(const CTxDB&);
+public:
+    bool ReadTxIndex(uint256 hash, CTxIndex& txindex);
+    bool UpdateTxIndex(uint256 hash, const CTxIndex& txindex);
+    bool AddTxIndex(const CTransaction& tx, const CDiskTxPos& pos, int nHeight);
+    bool EraseTxIndex(const CTransaction& tx);
+    bool ContainsTx(uint256 hash);
+    bool ReadDiskTx(uint256 hash, CTransaction& tx, CTxIndex& txindex);
+    bool ReadDiskTx(uint256 hash, CTransaction& tx);
+    bool ReadDiskTx(COutPoint outpoint, CTransaction& tx, CTxIndex& txindex);
+    bool ReadDiskTx(COutPoint outpoint, CTransaction& tx);
+    bool WriteBlockIndex(const CDiskBlockIndex& blockindex);
+    bool ReadHashBestChain(uint256& hashBestChain);
+    bool WriteHashBestChain(uint256 hashBestChain);
+    bool ReadBestInvalidWork(CBigNum& bnBestInvalidWork);
+    bool WriteBestInvalidWork(CBigNum bnBestInvalidWork);
+    bool ReadBlockFileInfo(int nFile, CBlockFileInfo &fileinfo);
+    bool WriteBlockFileInfo(int nFile, const CBlockFileInfo &fileinfo);
+    bool ReadLastBlockFile(int &nFile);
+    bool WriteLastBlockFile(int nFile);
+    bool LoadBlockIndex();
+private:
+    bool LoadBlockIndexGuts();
+};
+
+
+
 
 /** Access to the (IP) address database (peers.dat) */
 class CAddrDB
