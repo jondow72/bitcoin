@@ -16,8 +16,12 @@ using namespace std;
 map<uint256, CAlert> mapAlerts;
 CCriticalSection cs_mapAlerts;
 
-static const char* pszMainKey = "04fc9702847840aaf195de8442ebecedf5b095cdbb9bc716bda9110971b28a49e0ead8564ff0db22209e0374782c093bb899692d524e9d6a6956e7c5ecbcd68284";
-static const char* pszTestKey = "04302390343f91cc401d56d68b123028bf52e5fca1939df127f63c6467cdf9c8e2c14b61104cf817d0b780da337893ecc4aaff1309e536162dabbdb45200ca2b0a";
+static const char* pszMainKey = "046ba5ebf91d9c09553165c23775ae3c0b5869b49f98a56ddb0340579cbbff06fbe2fa0ffa3c3c1f242e6c22c9870d43d7c1f05cfb9abe09996535f5e09c5325e7";
+//static const char* pszMainKey = "044fd9786990cc9e075ef7c9ee679aec481535245491208cf89a52a98a3c73754f160c07d8410437e0847ba570a511c30ffad3092ab24dc7cb997e7a6913d94339";
+
+// TestNet alerts pubKey
+static const char* pszTestKey = "040da474ba51fb28028f087cd0000b15bd3bef8031b35c2cce2cdd640352d42798137efdaf6464103024265c53b756388c36dda1a2f0c77268f2995103b53212d3";
+//static const char* pszTestKey = "04ecb36d13861c56f7ad14529bc54dc0b5d5d954586698c2fc244045c617e44ed07994808643f67a71e3c1003e8506fef238cfb98bf9468c1f7b9a684c5b536f55";
 
 void CUnsignedAlert::SetNull()
 {
@@ -48,8 +52,8 @@ std::string CUnsignedAlert::ToString() const
     return strprintf(
         "CAlert(\n"
         "    nVersion     = %d\n"
-        "    nRelayUntil  = %"PRI64d"\n"
-        "    nExpiration  = %"PRI64d"\n"
+        "    nRelayUntil  = %" PRI64d "\n"
+        "    nExpiration  = %" PRI64d "\n"
         "    nID          = %d\n"
         "    nCancel      = %d\n"
         "    setCancel    = %s\n"

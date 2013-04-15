@@ -1,20 +1,20 @@
-Bitcoin-Qt: Qt4 GUI for Bitcoin
+Bitcoin-qt: Qt4 GUI for Bitcoin
 ===============================
 
 Build instructions
 ===================
 
-Debian
+Debian (i386, amd64)
 -------
 
 First, make sure that the required packages for Qt4 development of your
-distribution are installed, for Debian and Ubuntu these are:
+distribution are installed, for Debian and Ubuntu (i386, amd64) these are:
 
 ::
 
     apt-get install qt4-qmake libqt4-dev build-essential libboost-dev libboost-system-dev \
         libboost-filesystem-dev libboost-program-options-dev libboost-thread-dev \
-        libssl-dev libdb4.8++-dev
+        libssl-dev libdb4.8++-dev libgmp-dev libminiupnpc-dev
 
 then execute the following:
 
@@ -23,26 +23,44 @@ then execute the following:
     qmake
     make
 
-Alternatively, install `Qt Creator`_ and open the `bitcoin-qt.pro` file.
+Debian (armv6l, armv7l)
+-------
 
-An executable named `bitcoin-qt` will be built.
+First, make sure that the required packages for Qt4 development of your
+distribution are installed, for Debian and Ubuntu (i386, amd64) these are:
 
-.. _`Qt Creator`: http://qt-project.org/downloads/
+::
+
+    apt-get install qt4-qmake libqt4-dev build-essential libboost-dev libboost-system-dev \
+        libboost-filesystem-dev libboost-program-options-dev libboost-thread-dev \
+        libssl-dev libdb5.1++-dev libgmp-dev libminiupnpc-dev
+
+then execute the following:
+
+::
+
+    qmake
+    make
+
+Alternatively, install Qt Creator and open the `magi-qt.pro` file.
+
+An executable named `magi-qt` will be built.
+
 
 Windows
 --------
 
 Windows build instructions:
 
-- Download the `Qt Windows SDK`_ and install it. You don't need the Symbian stuff, just the desktop Qt.
+- Download the `QT Windows SDK`_ and install it. You don't need the Symbian stuff, just the desktop Qt.
 
 - Download and extract the `dependencies archive`_  [#]_, or compile openssl, boost and dbcxx yourself.
 
 - Copy the contents of the folder "deps" to "X:\\QtSDK\\mingw", replace X:\\ with the location where you installed the Qt SDK. Make sure that the contents of "deps\\include" end up in the current "include" directory.
 
-- Open the bitcoin-qt.pro file in Qt Creator and build as normal (ctrl-B)
+- Open the .pro file in QT creator and build as normal (ctrl-B)
 
-.. _`Qt Windows SDK`: http://qt-project.org/downloads/
+.. _`QT Windows SDK`: http://qt.nokia.com/downloads/sdk-windows-cpp
 .. _`dependencies archive`: https://download.visucore.com/bitcoin/qtgui_deps_1.zip
 .. [#] PGP signature: https://download.visucore.com/bitcoin/qtgui_deps_1.zip.sig (signed with RSA key ID `610945D0`_)
 .. _`610945D0`: http://pgp.mit.edu:11371/pks/lookup?op=get&search=0x610945D0
@@ -62,16 +80,16 @@ Mac OS X
 	sudo port selfupdate
 	sudo port install boost db48 miniupnpc
 
-- Open the bitcoin-qt.pro file in Qt Creator and build as normal (cmd-B)
+- Open the .pro file in Qt Creator and build as normal (cmd-B)
 
-.. _`Qt Mac OS X SDK`: http://qt-project.org/downloads/
+.. _`Qt Mac OS X SDK`: http://qt.nokia.com/downloads/sdk-mac-os-cpp
 .. _`MacPorts`: http://www.macports.org/install.php
 
 
 Build configuration options
 ============================
 
-UPnP port forwarding
+UPNnP port forwarding
 ---------------------
 
 To use UPnP for port forwarding behind a NAT router (recommended, as more connections overall allow for a faster and more stable bitcoin experience), pass the following argument to qmake:
@@ -108,8 +126,8 @@ FreeDesktop notification interface through DBUS using the following qmake option
 Generation of QR codes
 -----------------------
 
-libqrencode may be used to generate QRCode images for payment requests.
-It can be downloaded from http://fukuchi.org/works/qrencode/index.html.en, or installed via your package manager. Pass the USE_QRCODE
+libqrencode may be used to generate QRCode images for payment requests. 
+It can be downloaded from http://fukuchi.org/works/qrencode/index.html.en, or installed via your package manager. Pass the USE_QRCODE 
 flag to qmake to control this:
 
 +--------------+--------------------------------------------------------------------------+
@@ -132,6 +150,9 @@ If the globally installed development package of Berkely DB installed on your sy
 build yourself will be linked against that. The first time you run with a 5.X version the database will be upgraded,
 and 4.X cannot open the new format. This means that you cannot go back to the old statically linked version without
 significant hassle!
+
+For ease-of-adoption of a Linaro-based ARM build, 5.X should be used by default, as 4.X is not available from
+official repositories.
 
 .. _`this Debian issue`: http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=621425
 

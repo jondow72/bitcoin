@@ -1,5 +1,4 @@
 // Copyright (c) 2009-2012 The Bitcoin developers
-// Copyright (c) 2011-2013 The PPCoin developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #ifndef BITCOIN_CHECKPOINT_H
@@ -9,7 +8,7 @@
 #include "net.h"
 #include "util.h"
 
-#define CHECKPOINT_MAX_SPAN (60 * 60 * 4) // max 4 hours before latest block
+// #define CHECKPOINT_MAX_SPAN (60 * 60 * 4) // max 4 hours before latest block
 
 class uint256;
 class CBlockIndex;
@@ -33,19 +32,20 @@ namespace Checkpoints
     extern CSyncCheckpoint checkpointMessage;
     extern uint256 hashInvalidCheckpoint;
     extern CCriticalSection cs_hashSyncCheckpoint;
+    extern std::string strCheckpointWarning;
 
     CBlockIndex* GetLastSyncCheckpoint();
     bool WriteSyncCheckpoint(const uint256& hashCheckpoint);
+    bool IsSyncCheckpointEnforced();
     bool AcceptPendingSyncCheckpoint();
-    uint256 AutoSelectSyncCheckpoint();
+    const CBlockIndex* AutoSelectSyncCheckpoint();
     bool CheckSync(const uint256& hashBlock, const CBlockIndex* pindexPrev);
     bool WantedByPendingSyncCheckpoint(uint256 hashBlock);
     bool ResetSyncCheckpoint();
     void AskForPendingSyncCheckpoint(CNode* pfrom);
+    bool CheckCheckpointPubKey();
     bool SetCheckpointPrivKey(std::string strPrivKey);
     bool SendSyncCheckpoint(uint256 hashCheckpoint);
-    bool IsMatureSyncCheckpoint();
-    bool IsSyncCheckpointTooOld(unsigned int nSeconds);
 }
 
 // ppcoin: synchronized checkpoint
@@ -88,7 +88,8 @@ public:
 class CSyncCheckpoint : public CUnsignedSyncCheckpoint
 {
 public:
-    static const std::string strMasterPubKey;
+    static const std::string strMainPubKey;
+    static const std::string strTestPubKey;
     static std::string strMasterPrivKey;
 
     std::vector<unsigned char> vchMsg;
