@@ -163,6 +163,9 @@ equals(QMAKE_XCPUARCH, armv7l) {
 else:equals(QMAKE_XCPUARCH, armv6l) {
     message(Building without SSE2 support)
 }
+else:equals(QMAKE_XCPUARCH, aarch64) {
+    message(Building without SSE2 support)
+}
 else {
     message(Building with SSE2 support)
     QMAKE_CXXFLAGS += -msse2
@@ -460,7 +463,7 @@ LIBS += -lssl -lgmp -lcrypto -ldb_cxx$$BDB_LIB_SUFFIX
 LIBS += $$OPT_LIBS
 # -lgdi32 has to happen after -lcrypto (see  #681)
 windows:LIBS += -lws2_32 -lshlwapi -lmswsock -lole32 -loleaut32 -luuid -lgdi32
-LIBS += -lboost_system$$BOOST_LIB_SUFFIX -lboost_filesystem$$BOOST_LIB_SUFFIX -lboost_program_options$$BOOST_LIB_SUFFIX -lboost_thread$$BOOST_THREAD_LIB_SUFFIX
+LIBS += -lboost_system$$BOOST_LIB_SUFFIX -lboost_filesystem$$BOOST_LIB_SUFFIX -lboost_program_options$$BOOST_LIB_SUFFIX -lboost_thread$$BOOST_THREAD_LIB_SUFFIX -lboost_chrono$$BOOST_LIB_SUFFIX
 windows:LIBS += -lboost_chrono$$BOOST_LIB_SUFFIX
 
 contains(RELEASE, 1) {
