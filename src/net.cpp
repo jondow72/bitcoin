@@ -1227,7 +1227,7 @@ void ThreadDNSAddressSeed2(void* parg)
     printf("%d addresses found from DNS seeds\n", found);
 }
 
- unsigned int pnSeed[] = {
+unsigned int pnSeed[] = {
     0x5241D7C1, 0x33597419, 0x923B0335, 0x3359741A, 0xA3AC7A3C
 };
 
