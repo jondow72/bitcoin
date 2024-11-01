@@ -2,7 +2,7 @@
 
 #include "ui_helpmessagedialog.h"
 
-#include "bitcoingui.h"
+#include "magigui.h"
 #include "clientmodel.h"
 #include "guiconstants.h"
 #include "guiutil.h"
