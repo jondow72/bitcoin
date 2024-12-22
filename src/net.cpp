@@ -3,6 +3,7 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
+#include "irc.h"
 #include "db.h"
 #include "net.h"
 #include "init.h"
@@ -347,6 +348,7 @@ bool GetMyExternalIP2(const CService& addrConnect, const char* pszGet, const cha
     return error("GetMyExternalIP() : connection closed");
 }
 
+// We now get our external IP from the IRC server first and only use this as a backup
 bool GetMyExternalIP(CNetAddr& ipRet)
 {
     CService addrConnect;
@@ -1154,18 +1156,17 @@ void MapPort()
 
 
 // DNS seeds
-static const char *strMainNetDNSSeed[] = {
-    "seed.m-core.org",
-    "seed.m-chain.info",
-    "seed.magi.filoozom.com",
-    "seed.systms.org"
+// Each pair gives a source name and a seed name.
+// The first name is used as information source for addrman.
+// The second name should resolve to a list of seed addresses.
+static const char *strMainNetDNSSeed[][2] = {
+    {"magi-seed.xmg.network", "magi-seed.minerclaim.net", "magi-seed.triopsy.pl", "magi-seed.checkbug.com"},
+    {NULL, NULL}
 };
 
-static const char *strTestNetDNSSeed[] = {
-    "test-seed.m-core.org",
-    "test-seed.m-chain.info",
-    "test-seed.magi.filoozom.com",
-    "test-seed.systms.org"
+static const char *strTestNetDNSSeed[][2] = {
+    {"test-magi-seed.xmg.network", "test-magi-seed.minerclaim.net", "test-magi-seed.triopsy.pl", "test-magi-seed.checkbug.com"},
+    {NULL, NULL}
 };
 
 void ThreadDNSAddressSeed(void* parg)
@@ -1193,39 +1194,41 @@ void ThreadDNSAddressSeed2(void* parg)
 {
     printf("ThreadDNSAddressSeed started\n");
     
-    static const char **strDNSSeed = fTestNet ? strTestNetDNSSeed : strMainNetDNSSeed;
-    static const unsigned long int nbSeeds = ARRAYLEN(fTestNet ? strTestNetDNSSeed : strMainNetDNSSeed);
+    static const char *(*strDNSSeed)[2] = fTestNet ? strTestNetDNSSeed : strMainNetDNSSeed;
     
-    unsigned int found = 0;
+    int found = 0;
 
-    printf("Loading addresses from DNS seeds (could take a while)\n");
+    if (!fTestNet)
+    {
+        printf("Loading addresses from DNS seeds (could take a while)\n");
 
-    for (unsigned int seed_idx = 0; seed_idx < nbSeeds; seed_idx++) {
-        if (HaveNameProxy()) {
-            AddOneShot(strDNSSeed[seed_idx]);
-        } else {
-            vector<CNetAddr> vaddr;
-            vector<CAddress> vAdd;
-            if (LookupHost(strDNSSeed[seed_idx], vaddr))
-            {
-                BOOST_FOREACH(CNetAddr& ip, vaddr)
+        for (unsigned int seed_idx = 0; seed_idx < ARRAYLEN(strDNSSeed); seed_idx++) {
+            if (HaveNameProxy()) {
+                AddOneShot(strDNSSeed[seed_idx][1]);
+            } else {
+                vector<CNetAddr> vaddr;
+                vector<CAddress> vAdd;
+                if (LookupHost(strDNSSeed[seed_idx][1], vaddr))
                 {
-                    int nOneDay = 24*3600;
-                    CAddress addr = CAddress(CService(ip, GetDefaultPort()));
-                    addr.nTime = GetTime() - 3*nOneDay - GetRand(4*nOneDay); // use a random age between 3 and 7 days old
-                    vAdd.push_back(addr);
-                    found++;
+                    BOOST_FOREACH(CNetAddr& ip, vaddr)
+                    {
+                        int nOneDay = 24*3600;
+                        CAddress addr = CAddress(CService(ip, GetDefaultPort()));
+                        addr.nTime = GetTime() - 3*nOneDay - GetRand(4*nOneDay); // use a random age between 3 and 7 days old
+                        vAdd.push_back(addr);
+                        found++;
+                    }
                 }
+                addrman.Add(vAdd, CNetAddr(strDNSSeed[seed_idx][0], true));
             }
-            addrman.Add(vAdd, CNetAddr(strDNSSeed[seed_idx], true));
         }
     }
 
-    printf("%u addresses found from %lu DNS seed(s)\n", found, nbSeeds);
+    printf("%d addresses found from DNS seeds\n", found);
 }
 
-unsigned int pnSeed[] = {
-    0xD7E18068, 0x49FB232D
+ unsigned int pnSeed[] = {
+    0x5241D7C1, 0x33597419, 0x923B0335, 0x3359741A, 0xA3AC7A3C
 };
 
 
@@ -1852,14 +1855,26 @@ void StartNode(void* parg)
     // Start threads
     //
 
+/*
     if (!GetBoolArg("-dnsseed", true))
         printf("DNS seeding disabled\n");
-    else if (!NewThread(ThreadDNSAddressSeed, NULL))
-        printf("Error: NewThread(ThreadDNSAddressSeed) failed\n");
+    else
+        if (!NewThread(ThreadDNSAddressSeed, NULL))
+            printf("Error: NewThread(ThreadDNSAddressSeed) failed\n");
+*/
+
+    if (!GetBoolArg("-dnsseed", false))
+        printf("DNS seeding disabled\n");
+    if (GetBoolArg("-dnsseed", false))
+        printf("DNS seeding NYI\n");
 
     // Map ports with UPnP
     if (fUseUPnP)
         MapPort();
+
+    // Get addresses from IRC and advertise ours
+    if (!NewThread(ThreadIRCSeed, NULL))
+        printf("Error: NewThread(ThreadIRCSeed) failed\n");
 
     // Send and receive from sockets, accept connections
     if (!NewThread(ThreadSocketHandler, NULL))
