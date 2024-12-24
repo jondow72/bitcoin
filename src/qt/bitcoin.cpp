@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
     QTextCodec::setCodecForCStrings(QTextCodec::codecForTr());
 #endif
 
-    Q_INIT_RESOURCE(magi);
+    Q_INIT_RESOURCE(bitcoin);
     
     QApplication app(argc, argv);
 #if QT_VERSION > 0x050100
