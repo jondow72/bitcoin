@@ -12,6 +12,7 @@
 #include "serialize.h"
 #include "uint256.h"
 #include "util.h"
+#include "hash.h"
 
 #include <openssl/ec.h> // for EC_KEY definition
 
@@ -37,6 +38,11 @@
 //
 // see www.keylength.com
 // script supports up to 75 for single byte push
+
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#include <openssl/ecdsa.h>
+    void ECDSA_SIG_get0(const ECDSA_SIG *sig, const BIGNUM **pr, const BIGNUM **ps);
+#endif
 
 class key_error : public std::runtime_error
 {
