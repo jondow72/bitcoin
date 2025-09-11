@@ -33,9 +33,10 @@ const std::string CLIENT_NAME("Satoshi");
 #    include "build.h"
 #endif
 
-// git will put "#define GIT_ARCHIVE 1" on the next line inside archives. $Format:%n#define GIT_ARCHIVE 1$
+// git will put "#define GIT_ARCHIVE 1" on the next line inside archives. 
+#define GIT_ARCHIVE 1
 #ifdef GIT_ARCHIVE
-#    define GIT_COMMIT_ID "$Format:%h$"
+#    define GIT_COMMIT_ID "32a928e"
 #    define GIT_COMMIT_DATE "$Format:%cD"
 #endif
 
@@ -47,9 +48,9 @@ const std::string CLIENT_NAME("Satoshi");
 
 #ifndef BUILD_DESC
 #    ifdef GIT_COMMIT_ID
-#        define BUILD_DESC BUILD_DESC_FROM_COMMIT(PPCOIN_VERSION_MAJOR, PPCOIN_VERSION_MINOR, PPCOIN_VERSION_REVISION, PPCOIN_VERSION_BUILD, GIT_COMMIT_ID)
+#        define BUILD_DESC BUILD_DESC_FROM_COMMIT(DISPLAY_VERSION_MAJOR, DISPLAY_VERSION_MINOR, DISPLAY_VERSION_REVISION, DISPLAY_VERSION_BUILD, GIT_COMMIT_ID)
 #    else
-#        define BUILD_DESC BUILD_DESC_FROM_UNKNOWN(PPCOIN_VERSION_MAJOR, PPCOIN_VERSION_MINOR, PPCOIN_VERSION_REVISION, PPCOIN_VERSION_BUILD)
+#        define BUILD_DESC BUILD_DESC_FROM_UNKNOWN(DISPLAY_VERSION_MAJOR, DISPLAY_VERSION_MINOR, DISPLAY_VERSION_REVISION, DISPLAY_VERSION_BUILD)
 #    endif
 #endif
 
